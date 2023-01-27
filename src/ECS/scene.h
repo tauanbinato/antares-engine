@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "components.h"
+#include "../AssetStore/AssetStore.h"
 
 
 class Entity;
@@ -15,7 +16,7 @@ private:
 
   void print_system();
   void move_system(double deltaTime);
-  void RenderSystem(SDL_Renderer* renderer);
+  void RenderSystem(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore);
 
 public:
   Scene();
@@ -24,7 +25,7 @@ public:
   Entity create_entity(std::string tag);
 
   void update(double deltaTime);
-  void render(SDL_Renderer* renderer);
+  void render(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore);
 
   friend class Entity;
 };

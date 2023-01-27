@@ -1,7 +1,6 @@
 #pragma once
 
 #include <entt/entt.hpp>
-
 #include "scene.h"
 
 
@@ -17,7 +16,7 @@ public:
   inline entt::entity get_handle() { return entity_handle; }
 
   template<typename T, typename... Args>
-  T& add_component(Args&&... args)
+  T& AddComponent(Args&&... args)
   {
     return scene->registry.emplace<T>(entity_handle, std::forward<Args>(args)...);
   }

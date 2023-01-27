@@ -8,7 +8,7 @@
 
 Game::Game() {
 	_isRunning = false;
-	Logger::Log("Game constructor called!");
+	_assetStore = std::make_unique<AssetStore>();
 }
 
 Game::~Game() {
@@ -64,22 +64,23 @@ void Game::ProcessInput() {
 	}
 }
 
-glm::vec2 tankPosition;
-glm::vec2 tankVelocity;
 
 void Game::Setup() {
-	tankPosition = glm::vec2(10.0, 20.0);
-	tankVelocity = glm::vec2(5.0, 0.0);
 
+	// Adding assets to the asset store
+	_assetStore->AddTexture(_renderer, "tank-image", "./assets/images/tank-panther-right.png");
+	_assetStore->AddTexture(_renderer, "truck-image", "./assets/images/truck-ford-right.png");
+
+	// Create an entity tank
 	Entity tank = _scene->create_entity("tank");
-	Entity tank2 = _scene->create_entity("tank2");
-	tank.add_component<PositionComponent>(tankPosition.x, tankPosition.y);
-	tank.add_component<VelocityComponent>(tankVelocity.x, tankVelocity.y);
-	tank.add_component<AccelerationComponent>(0.0, 0.0);
+	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
+	tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
 
-	tank2.add_component<PositionComponent>(50.0, 200.0);
-	tank2.add_component<VelocityComponent>(0.0, 0.0);
-	tank2.add_component<AccelerationComponent>(5.0, 0.0);
+	Entity tank2 = _scene->create_entity("tank2");
+	tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
+	tank2.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 10.0));
+	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32);
 
 	// PositionComponent& pos = tank.get_component<PositionComponent>();
 }
@@ -105,7 +106,7 @@ void Game::Render() {
 	SDL_RenderClear(_renderer);
 
 
-	_scene->render(_renderer);
+	_scene->render(_renderer, _assetStore);
 	SDL_RenderPresent(_renderer);
 }
 
