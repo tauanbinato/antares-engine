@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef ANTARES_H
+#define ANTARES_H
 
 #include <SDL2/SDL.h>
 #include "../ECS/scene.h"
@@ -8,7 +8,7 @@
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
 
-class Game {
+class Antares {
 private:
 	bool _isRunning;
 	int _millisecsPreviousFrame = 0;
@@ -18,8 +18,8 @@ private:
 	std::unique_ptr<AssetStore> _assetStore;
 
 public:
-	Game();
-	~Game();
+	Antares();
+	~Antares();
 	void Initialize();
 	void Run();
 	void Setup();
@@ -27,6 +27,7 @@ public:
 	void Update();
 	void Render();
 	void Destroy();
+	void LoadScene(Scene* newScene);
 
 	int _windowWidth;
 	int _windowHeight;

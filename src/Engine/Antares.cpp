@@ -1,21 +1,22 @@
-#include "Game.h"
+#include "Antares.h"
 #include "../ECS/entity.h"
 #include "../Logger/Logger.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <fstream>
 
-Game::Game() {
+Antares::Antares() {
 	_isRunning = false;
 	_assetStore = std::make_unique<AssetStore>();
 }
 
-Game::~Game() {
-	Logger::Log("Game destructor called!");
+Antares::~Antares() {
+	Logger::Log("Antares destructor called!");
 }
 
-void Game::Initialize() {
+void Antares::Initialize() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		Logger::Err("Error initializing SDL.");
 		return;
@@ -48,7 +49,7 @@ void Game::Initialize() {
 	_scene = new Scene();
 }
 
-void Game::ProcessInput() {
+void Antares::ProcessInput() {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
 		switch (sdlEvent.type) {
@@ -65,27 +66,57 @@ void Game::ProcessInput() {
 }
 
 
-void Game::Setup() {
-
+void Antares::LoadScene(Scene* newScene) {
 	// Adding assets to the asset store
 	_assetStore->AddTexture(_renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	_assetStore->AddTexture(_renderer, "truck-image", "./assets/images/truck-ford-right.png");
+	_assetStore->AddTexture(_renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+
+	// Load the tilemap
+	int tileSize = 32;
+	double tileScale = 3.0;
+	int mapNumCols = 25;
+	int mapNumRows = 20;
+
+	std::fstream mapFile;
+	mapFile.open("./assets/tilemaps/jungle.map");
+
+	for (int y = 0; y < mapNumRows; y++) {
+		for (int x = 0; x < mapNumCols; x++) {
+			char ch;
+			mapFile.get(ch);
+			int srcRectY = std::atoi(&ch) * tileSize;
+			mapFile.get(ch);
+			int srcRectX = std::atoi(&ch) * tileSize;
+			mapFile.ignore();
+
+			std::string tileTag = "tile-x: " + std::to_string(srcRectX) + " -y: " + std::to_string(srcRectY);
+			Entity tile = newScene->create_entity(tileTag);
+			tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
+			tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, srcRectX, srcRectY, 0);
+		}
+	}
+	mapFile.close();
 
 	// Create an entity tank
-	Entity tank = _scene->create_entity("tank");
-	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
-	tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
-	tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
+	Entity tank = newScene->create_entity("tank");
+	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(2.0, 2.0), 0.0);
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(5.0, 0.0));
+	tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0, 3);
 
-	Entity tank2 = _scene->create_entity("tank2");
-	tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
-	tank2.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 10.0));
-	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32);
+	Entity tank2 = newScene->create_entity("tank2");
+	tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.5, 1.5), 0.0);
+	tank2.AddComponent<RigidBodyComponent>(glm::vec2(2.0, 0.0));
+	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32, 0, 0, 2);
 
-	// PositionComponent& pos = tank.get_component<PositionComponent>();
+	newScene->SortZIndex();
 }
 
-void Game::Update() {
+void Antares::Setup() {
+	LoadScene(_scene);
+}
+
+void Antares::Update() {
 
 	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - _millisecsPreviousFrame);
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
@@ -101,7 +132,7 @@ void Game::Update() {
 	_scene->update(deltaTime);
 }
 
-void Game::Render() {
+void Antares::Render() {
 	SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
 	SDL_RenderClear(_renderer);
 
@@ -110,7 +141,7 @@ void Game::Render() {
 	SDL_RenderPresent(_renderer);
 }
 
-void Game::Run() {
+void Antares::Run() {
 	Setup();
 
 	while (_isRunning) {
@@ -120,7 +151,7 @@ void Game::Run() {
 	}
 }
 
-void Game::Destroy() {
+void Antares::Destroy() {
 	delete _scene;
 	SDL_DestroyRenderer(_renderer);
 	SDL_DestroyWindow(_window);

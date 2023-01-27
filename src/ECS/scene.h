@@ -12,7 +12,7 @@ class Entity;
 class Scene
 {
 private:
-  entt::registry registry;
+  entt::registry _registry;
 
   void print_system();
   void move_system(double deltaTime);
@@ -26,6 +26,7 @@ public:
 
   void update(double deltaTime);
   void render(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore);
+  void SortZIndex();
 
   friend class Entity;
 };

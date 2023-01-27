@@ -1,11 +1,11 @@
-#include "./Engine/Game.h"
+#include "./Engine/Antares.h"
 
 int main(int argc, char* argv[]) {
-    Game game;
+    Antares engine;
 
-    game.Initialize();
-    game.Run();
-    game.Destroy();
+    engine.Initialize();
+    engine.Run();
+    engine.Destroy();
 
     return 0;
 }
