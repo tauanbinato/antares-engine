@@ -102,14 +102,16 @@ void Antares::LoadScene(Scene* newScene) {
 
 	// Create an entity tank
 	Entity tank = newScene->create_entity("tank");
-	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(2.0, 2.0), 0.0);
-	tank.AddComponent<RigidBodyComponent>(glm::vec2(5.0, 0.0));
+	tank.AddComponent<TransformComponent>(glm::vec2(500.0, 10.0), glm::vec2(2.0, 2.0), 0.0);
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(-30.0, 0.0));
 	tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0, 1);
+	tank.AddComponent<BoxColliderComponent>(32, 32);
 
 	Entity tank2 = newScene->create_entity("truck");
 	tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.5, 1.5), 0.0);
-	tank2.AddComponent<RigidBodyComponent>(glm::vec2(2.0, 0.0));
+	tank2.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
 	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32, 0, 0, 1);
+	tank2.AddComponent<BoxColliderComponent>(32, 32);
 
 	Entity chopper = newScene->create_entity("chopper");
 	chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 100.0), glm::vec2(10.0, 10.0), 0.0);

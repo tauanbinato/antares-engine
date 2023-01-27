@@ -87,11 +87,27 @@ void Scene::AnimationSystem() {
   }
 }
 
+void Scene::CollisionSystem() {
+  auto view = _registry.view<BoxColliderComponent, TransformComponent>();
+
+  // use forward iterators and get only the components of interest
+  for (auto entityA : view) {
+    for (auto entityB : view) {
+      auto& boxCollider = view.get<BoxColliderComponent>(entity);
+      auto& transform = view.get<TransformComponent>(entity);
+
+      animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameSpeedRate / 1000) % animation.numFrames;
+      sprite.srcRect.x = animation.currentFrame * sprite.width;
+    }
+
+  }
+}
+
 
 void Scene::update(double deltaTime) {
   move_system(deltaTime);
   AnimationSystem();
-  //print_system();
+  CollisionSystem();
 }
 
 void Scene::render(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore) {
