@@ -19,6 +19,7 @@ private:
   void RenderSystem(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore);
   void AnimationSystem();
   void CollisionSystem();
+  bool CheckAABBCollision(double aX, double aY, double aW, double aH, double bX, double bY, double bW, double bH);
 
 public:
   Scene();

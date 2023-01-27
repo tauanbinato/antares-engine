@@ -92,15 +92,41 @@ void Scene::CollisionSystem() {
 
   // use forward iterators and get only the components of interest
   for (auto entityA : view) {
+    auto& aCollider = view.get<BoxColliderComponent>(entityA);
+    auto& aTransform = view.get<TransformComponent>(entityA);
     for (auto entityB : view) {
-      auto& boxCollider = view.get<BoxColliderComponent>(entity);
-      auto& transform = view.get<TransformComponent>(entity);
+      auto& bCollider = view.get<BoxColliderComponent>(entityB);
+      auto& bTransform = view.get<TransformComponent>(entityB);
 
-      animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameSpeedRate / 1000) % animation.numFrames;
-      sprite.srcRect.x = animation.currentFrame * sprite.width;
+      // Perform the AABB collision check between entities a and b
+      bool collisionHappened = CheckAABBCollision(
+        aTransform.position.x + aCollider.offset.x,
+        aTransform.position.y + aCollider.offset.y,
+        aCollider.width,
+        aCollider.height,
+        bTransform.position.x + bCollider.offset.x,
+        bTransform.position.y + bCollider.offset.y,
+        bCollider.width,
+        bCollider.height
+      );
+
+      if (collisionHappened) {
+        Logger::Log("Entity  is colliding with entity ");
+
+        // TODO: emit an event...
+      }
     }
 
   }
+}
+
+bool Scene::CheckAABBCollision(double aX, double aY, double aW, double aH, double bX, double bY, double bW, double bH) {
+  return (
+    aX < bX + bW &&
+    aX + aW > bX &&
+    aY < bY + bH &&
+    aY + aH > bY
+    );
 }
 
 
