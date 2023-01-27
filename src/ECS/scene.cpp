@@ -74,8 +74,23 @@ void Scene::RenderSystem(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& as
   }
 }
 
+void Scene::AnimationSystem() {
+  auto view = _registry.view<SpriteComponent, AnimationComponent>();
+
+  // use forward iterators and get only the components of interest
+  for (auto entity : view) {
+    auto& sprite = view.get<SpriteComponent>(entity);
+    auto& animation = view.get<AnimationComponent>(entity);
+
+    animation.currentFrame = ((SDL_GetTicks() - animation.startTime) * animation.frameSpeedRate / 1000) % animation.numFrames;
+    sprite.srcRect.x = animation.currentFrame * sprite.width;
+  }
+}
+
+
 void Scene::update(double deltaTime) {
   move_system(deltaTime);
+  AnimationSystem();
   //print_system();
 }
 

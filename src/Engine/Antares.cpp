@@ -71,10 +71,12 @@ void Antares::LoadScene(Scene* newScene) {
 	_assetStore->AddTexture(_renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	_assetStore->AddTexture(_renderer, "truck-image", "./assets/images/truck-ford-right.png");
 	_assetStore->AddTexture(_renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+	_assetStore->AddTexture(_renderer, "chopper-image", "./assets/images/chopper.png");
+	_assetStore->AddTexture(_renderer, "radar-image", "./assets/images/radar.png");
 
 	// Load the tilemap
 	int tileSize = 32;
-	double tileScale = 3.0;
+	double tileScale = 4.0;
 	int mapNumCols = 25;
 	int mapNumRows = 20;
 
@@ -102,12 +104,24 @@ void Antares::LoadScene(Scene* newScene) {
 	Entity tank = newScene->create_entity("tank");
 	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(2.0, 2.0), 0.0);
 	tank.AddComponent<RigidBodyComponent>(glm::vec2(5.0, 0.0));
-	tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0, 3);
+	tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 0, 0, 1);
 
-	Entity tank2 = newScene->create_entity("tank2");
+	Entity tank2 = newScene->create_entity("truck");
 	tank2.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.5, 1.5), 0.0);
 	tank2.AddComponent<RigidBodyComponent>(glm::vec2(2.0, 0.0));
-	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32, 0, 0, 2);
+	tank2.AddComponent<SpriteComponent>("truck-image", 32, 32, 0, 0, 1);
+
+	Entity chopper = newScene->create_entity("chopper");
+	chopper.AddComponent<TransformComponent>(glm::vec2(10.0, 100.0), glm::vec2(10.0, 10.0), 0.0);
+	chopper.AddComponent<RigidBodyComponent>(glm::vec2(10.0, 0.0));
+	chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 0, 0, 3);
+	chopper.AddComponent<AnimationComponent>(2, 15, true);
+
+	Entity radar = newScene->create_entity("ui-radar");
+	radar.AddComponent<TransformComponent>(glm::vec2(_windowWidth - 74, 10.0), glm::vec2(1.0, 1.0), 0.0);
+	radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+	radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 0, 0, 5);
+	radar.AddComponent<AnimationComponent>(8, 5, true);
 
 	newScene->SortZIndex();
 }

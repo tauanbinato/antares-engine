@@ -17,6 +17,7 @@ private:
   void print_system();
   void move_system(double deltaTime);
   void RenderSystem(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore);
+  void AnimationSystem();
 
 public:
   Scene();
